@@ -13,11 +13,11 @@
         android:layout_marginStart="34dp"
         android:layout_marginBottom="46dp"
         android:text="Switch"
-        app:layout_constraintBottom_toTopOf="@+id/button"
-        app:layout_constraintStart_toStartOf="@+id/button" />
+        app:layout_constraintBottom_toTopOf="@+id/btnIniciar"
+        app:layout_constraintStart_toStartOf="@+id/btnIniciar" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btnIniciar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="inicarThread"
@@ -32,7 +32,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
+        android:onClick="pararThread"
         android:text="Parar Thread"
-        app:layout_constraintEnd_toEndOf="@+id/button"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
+        app:layout_constraintEnd_toEndOf="@+id/btnIniciar"
+        app:layout_constraintTop_toBottomOf="@+id/btnIniciar" />
 </androidx.constraintlayout.widget.ConstraintLayout>
