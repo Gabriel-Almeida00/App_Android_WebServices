@@ -11,61 +11,61 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ProgressBar progressBar;
+    private Button btnRecuperar;
+    private TextView txtDados;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        progressBar = findViewById(R.id.progressBar);
-    }
+        btnRecuperar = findViewById(R.id.btnRecuperar);
+        txtDados = findViewById(R.id.txtResultado);
 
-    public void IniciarTaskAsync(View v){
-        MyAsyncTask task = new MyAsyncTask();
-        task.execute(10);
-    }
-
-    class MyAsyncTask extends AsyncTask<Integer,Integer,String >{
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected String doInBackground(Integer... integers) {
-
-            int numero = integers[0];
-            for(int i=0; i < numero; i++){
-                publishProgress(i);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+        btnRecuperar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MyTask task = new MyTask();
+                String urlApi = "https://blockchain.info/ticker";
+                task.execute(urlApi);
             }
+        });
+    }
 
-            return "Finalizado";
-        }
+    class MyTask extends AsyncTask<String, Void, String>{
 
         @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            progressBar.setProgress(values[0]);
+        protected String doInBackground(String... strings) {
+            String stringUrl = strings[0];
+
+            try {
+                URL url = new URL(stringUrl);
+                HttpURLConnection conexao = (HttpsURLConnection) url.openConnection();
+                InputStream inputStream = conexao.getInputStream();
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return null;
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            Toast.makeText(MainActivity.this,
-                    s, Toast.LENGTH_SHORT).show();
-            progressBar.setProgress(0);
-            progressBar.setVisibility(View.INVISIBLE);
         }
     }
 }
