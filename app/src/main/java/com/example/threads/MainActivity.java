@@ -14,8 +14,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -40,32 +42,51 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 MyTask task = new MyTask();
                 String urlApi = "https://blockchain.info/ticker";
-                task.execute(urlApi);
+                String cep ="01310100";
+                String urlCep = "https://viacep.com.br/ws/" + cep + "/json/";
+                task.execute(urlCep);
             }
         });
     }
 
-    class MyTask extends AsyncTask<String, Void, String>{
+    class MyTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... strings) {
             String stringUrl = strings[0];
+            InputStream inputStream = null;
+            InputStreamReader inputStreamReader = null;
+            StringBuffer buffer = null;
 
             try {
                 URL url = new URL(stringUrl);
                 HttpURLConnection conexao = (HttpsURLConnection) url.openConnection();
-                InputStream inputStream = conexao.getInputStream();
+
+                inputStream = conexao.getInputStream();
+                inputStreamReader = new InputStreamReader(inputStream);
+
+                BufferedReader reader = new BufferedReader(inputStreamReader);
+                buffer = new StringBuffer();
+
+                String linha = "";
+                reader.readLine();
+
+                while((linha = reader.readLine()) != null){
+                    buffer.append(linha);
+                }
+
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            return null;
+            return buffer.toString();
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+        protected void onPostExecute(String resultado) {
+            super.onPostExecute(resultado);
+            txtDados.setText(resultado);
         }
     }
 }
