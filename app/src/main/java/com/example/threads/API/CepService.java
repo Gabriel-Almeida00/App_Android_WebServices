@@ -4,9 +4,10 @@ import com.example.threads.Model.Cep;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 
 public interface CepService {
 
-    @GET("01001000/json/")
-    Call<Cep> recuperarCep();
+    @GET("{cep}/json/")
+    Call<Cep> recuperarCep(@Path("cep") String cep);
 }
