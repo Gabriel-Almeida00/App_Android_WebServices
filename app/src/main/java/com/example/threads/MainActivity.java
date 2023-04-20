@@ -8,6 +8,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.example.threads.API.CepService;
+import com.example.threads.Model.Cep;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,6 +23,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -36,14 +43,15 @@ public class MainActivity extends AppCompatActivity {
         botaoRecuperar = findViewById(R.id.btnRecuperar);
         textoResultado = findViewById(R.id.txtResultado);
 
+        retrofit = new Retrofit.Builder()
+                .baseUrl("https://viacep.com.br/ws/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
         botaoRecuperar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                retrofit = new Retrofit.Builder()
-                        .baseUrl("https://viacep.com.br/ws/01001000/json/")
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build();
+                recuperaCepRetrofit();
 
                 /*MyTask task = new MyTask();
                 String urlApi = "https://blockchain.info/ticker";
@@ -53,6 +61,26 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void recuperaCepRetrofit(){
+        CepService service = retrofit.create(CepService.class);
+        Call<Cep> call = service.recuperarCep();
+
+        call.enqueue(new Callback<Cep>() {
+            @Override
+            public void onResponse(Call<Cep> call, Response<Cep> response) {
+                if(response.isSuccessful()){
+                    Cep cep = response.body();
+                    textoResultado.setText(cep.getLogradouro()+ " / "+cep.getBairro());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Cep> call, Throwable t) {
+
+            }
+        });
     }
 
 
