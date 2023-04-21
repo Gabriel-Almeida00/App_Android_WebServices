@@ -60,8 +60,9 @@ public class MainActivity extends AppCompatActivity {
         botaoRecuperar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                recuperarListaRetrofit();
+                //recuperarListaRetrofit();
                 //recuperaCepRetrofit();
+                salvarPostagem();
 
                 /*MyTask task = new MyTask();
                 String urlApi = "https://blockchain.info/ticker";
@@ -73,7 +74,34 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void recuperarListaRetrofit(){
+    private void salvarPostagem() {
+        Postagem postagem = new Postagem(12, "titulo Postagem", "Corpo Postagem");
+
+        DataService service = retrofit.create(DataService.class);
+        Call<Postagem> call = service.salvarPostagem(postagem);
+
+        call.enqueue(new Callback<Postagem>() {
+            @Override
+            public void onResponse(Call<Postagem> call, Response<Postagem> response) {
+                if (response.isSuccessful()) {
+                    Postagem popstagemResposta = response.body();
+                    textoResultado.setText(
+                                    "Códgo: " + response.code() +
+                                    "id: " + popstagemResposta.getId() +
+                                    "Titulo: " + popstagemResposta.getTitle() +
+                                    "Body: " + popstagemResposta.getBody()
+                    );
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Postagem> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void recuperarListaRetrofit() {
         DataService service = retrofit.create(DataService.class);
         //Call<List<Foto>> call = service.recuperarFotos();
         Call<List<Postagem>> call = service.recuperarPostagens();
@@ -81,11 +109,11 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<List<Postagem>>() {
             @Override
             public void onResponse(Call<List<Postagem>> call, Response<List<Postagem>> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
                     //listaFotos = response.body();
                     listaPostagem = response.body();
 
-                    for(int i =0; i < listaPostagem.size();i++){
+                    for (int i = 0; i < listaPostagem.size(); i++) {
                         //Foto foto = listaPostagem.get(i);
                         Postagem postagem = listaPostagem.get(i);
                         Log.d("resultado", "resultado: " + postagem.getId() + " / " + postagem.getTitle());
@@ -100,16 +128,16 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void recuperaCepRetrofit(){
+    private void recuperaCepRetrofit() {
         CepService service = retrofit.create(CepService.class);
         Call<Cep> call = service.recuperarCep("01001000");
 
         call.enqueue(new Callback<Cep>() {
             @Override
             public void onResponse(Call<Cep> call, Response<Cep> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
                     Cep cep = response.body();
-                    textoResultado.setText(cep.getLogradouro()+ " / "+cep.getBairro());
+                    textoResultado.setText(cep.getLogradouro() + " / " + cep.getBairro());
                 }
             }
 
@@ -121,9 +149,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
-    class MyTask extends AsyncTask<String, Void, String>{
+    class MyTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected void onPreExecute() {
@@ -147,15 +173,15 @@ public class MainActivity extends AppCompatActivity {
                 inputStream = conexao.getInputStream();
 
                 //inputStreamReader lê os dados em Bytes e decodifica para caracteres
-                inputStreamReader = new InputStreamReader( inputStream );
+                inputStreamReader = new InputStreamReader(inputStream);
 
                 //Objeto utilizado para leitura dos caracteres do InpuStreamReader
-                BufferedReader reader = new BufferedReader( inputStreamReader );
+                BufferedReader reader = new BufferedReader(inputStreamReader);
                 buffer = new StringBuffer();
                 String linha = "";
 
-                while((linha = reader.readLine()) != null){
-                    buffer.append( linha );
+                while ((linha = reader.readLine()) != null) {
+                    buffer.append(linha);
                 }
 
             } catch (MalformedURLException e) {
@@ -203,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            textoResultado.setText(logradouro+" / "+cep+" / "+complemento+" / "+bairro+" / "+localidade+" / "+uf);
+            textoResultado.setText(logradouro + " / " + cep + " / " + complemento + " / " + bairro + " / " + localidade + " / " + uf);
             //textoResultado.setText(valorMoeda+" /"+simbolo);
         }
     }
