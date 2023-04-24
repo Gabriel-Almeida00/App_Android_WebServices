@@ -2,7 +2,7 @@ package com.example.threads.Model;
 
 public class Foto {
 
-    private String id;
+    private Integer id;
     private String albumId;
     private String title;
     private String url;
